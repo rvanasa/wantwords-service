@@ -1,6 +1,12 @@
-# Want, Words!
+# Want, Words! Service?
 
 A convenient way to get some words that you want. 
+
+---
+
+[Production webapp](https://wantwords.herokuapp.com)
+
+[Global lists repository](https://github.com/rvanasa/wantwords)
 
 ---
 
@@ -14,15 +20,15 @@ A convenient way to get some words that you want.
 
 `POST /api/source/:key` - retrieve the source code for the given list.
 
-`POST /api/choose` - parse and evaluate the script provided in the request body.
+`POST /api/choose` - evaluate the script provided in the request body.
 
-`POST /api/choose/:amount` - parse and evaluate the provided script `:amount` times.
+`POST /api/choose/:amount` - evaluate the provided script `:amount` times.
 
 ---
 
 ### File Format
 
-Below is a quickstart for the `.want` file format:
+Below is a quick example of the `.want` file format:
 
 ```
 # I'm a comment!
@@ -54,5 +60,18 @@ I'm a {reference}!
     # Self-reference the top list in this file using {_}
     The "{_}"
 
+```
 
+---
+
+### Developer Setup
+
+```sh
+git clone https://github.com/rvanasa/wantwords-server
+cd wantwords-server
+npm install
+```
+
+```sh
+npm run start-dev
 ```
