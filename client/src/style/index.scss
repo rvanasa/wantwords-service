@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400');
+@import url('https://fonts.googleapis.com/css?family=Shadows+Into+Light:400');
+
+$font-family-sans-serif: 'Source Sans Pro', sans-serif;
+$headings-font-family: 'Shadows Into Light', sans-serif;
+
+$spacer: 1em;
+
+//$primary: #7D61C8;
+//$secondary: #ffffff;
+//$light: #f1f1f1;
+//$dark: #000000;
+
+@import '../../node_modules/bootswatch/dist/litera/variables';
+@import 'mixins/bootstrap';
+@import '../../node_modules/bootswatch/dist/litera/bootswatch';
+
+@import 'mixins/scrollbar';
+@import 'mixins/_spinner.scss';
+
+body {
+  overflow-x: hidden;
+}
+
+*:focus {
+  outline: none;
+}
+
+.noselect, .clickable, h1, h2, h3, h4 {
+  user-select: none;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+::selection {
+  background: $secondary;
+  color: $light;
+}
+
+.clickable, .btn {
+  cursor: pointer;
+
+  &:hover {
+    transition: .05s ease-out;
+    opacity: .9 !important;
+  }
+
+  &:active {
+    transition: 0s;
+    opacity: .8 !important;
+    transform: scale(.99);
+  }
+
+  &::selection {
+    display: none;
+  }
+}

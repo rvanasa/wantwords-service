@@ -1,0 +1,21 @@
+
+{thing}
+the {thing}
+a {thing}
+both a {thing} and a {thing}
+some sort of {thing}
+
+{:: thing}
+
+    {obj}
+    {adj} {thing}
+
+{:: adj}
+
+    {adj_obj:adj}
+
+{:: obj}
+
+    {adj_obj:obj}
+    {vekta:boss_noun}
+    {vekta:item_common}

@@ -1,0 +1,23 @@
+{
+  "name": "wantwords-service",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node .",
+    "start-dev": "concurrently -r \"nodemon .\" \"cd ./client && npm run start\""
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "block-parser": "1.0.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "cron": "^1.8.2",
+    "express": "^4.17.1",
+    "glob-promise": "^3.4.0",
+    "simple-git": "^1.131.0",
+    "glob": "^7.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2",
+    "concurrently": "^5.1.0"
+  }
+}
