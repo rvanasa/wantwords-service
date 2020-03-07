@@ -75,3 +75,7 @@ npm install
 ```sh
 npm run start-dev
 ```
+
+Webapp: http://localhost:3000
+
+API: http://localhost:8080/api/...
