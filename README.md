@@ -18,7 +18,7 @@ A convenient way to get some words that you want.
 
 `GET /api/random/:key/:amount` - generate a bunch of random objects. 
 
-`POST /api/source/:key` - retrieve the source code for the given list.
+`GET /api/source/:key` - retrieve the source code for the given list.
 
 `POST /api/choose` - evaluate the script provided in the request body.
 
