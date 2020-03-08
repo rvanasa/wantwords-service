@@ -28,8 +28,9 @@ export function parse(key, data) {
                 currentKey = mainKey;
             }
             else if(line.startsWith('{>') && line.endsWith('}')) {
-                let nextKey = fromNamespace(namespace, line.slice(2, -1).trim());
-                if(!nextKey) {
+                let into = line.startsWith('{>>');
+                let nextKey = fromNamespace(namespace, line.slice(into ? 3 : 2, -1).trim());
+                if(!nextKey || into) {
                     namespace = nextKey;
                 }
                 else if(currentKey !== nextKey) {

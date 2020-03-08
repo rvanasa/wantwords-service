@@ -69,6 +69,9 @@ I'm a {reference}!
     {> boss_title}
         the {person_adj}
     
+    # Shorthand for {> vekta:} and {> boss_title}
+    {>> vekta:boss_title}
+    
     # Move into a namespace
     {> adj_obj:}
         # Override "adj_obj:obj"

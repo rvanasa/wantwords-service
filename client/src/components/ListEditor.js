@@ -21,7 +21,7 @@ const language = {
         pattern: /\{!.*}/,
     },
     'number': {
-        pattern: /\{.+}/,
+        pattern: /\{[^}]+}/,
         inside: {
             'selector': /[a-zA-Z_.]*:/,
         },
