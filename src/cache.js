@@ -57,7 +57,8 @@ export async function update(initial) {
         glob.sync(`${dir}/**/*.txt`)
             .forEach(file => {
                 let data = fs.readFileSync(file).toString('utf8')
-                    .replace('\r\n', '\n');
+                    .replace('\r\n', '\n')
+                    .trim();
 
                 let key = relative(dir, file)
                     .slice(0, -4)

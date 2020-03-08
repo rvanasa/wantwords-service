@@ -22,7 +22,12 @@ export function parse(key, data) {
     for(let line of data.split(/\r?\n/)) {
         line = line.trim();
         if(line.length && !line.startsWith('#')) {
-            if(line.startsWith('{>') && line.endsWith('}')) {
+            if(line.startsWith('{!') && line.endsWith('}')) {
+                let mainKey = line.slice(2, -1).trim();
+                locals[currentKey] = current;
+                currentKey = mainKey;
+            }
+            else if(line.startsWith('{>') && line.endsWith('}')) {
                 let nextKey = fromNamespace(namespace, line.slice(2, -1).trim());
                 if(!nextKey) {
                     namespace = nextKey;

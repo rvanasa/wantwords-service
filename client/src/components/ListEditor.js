@@ -17,6 +17,9 @@ const language = {
             'selector': /[a-zA-Z_.]*:/,
         },
     },
+    'prolog': {
+        pattern: /\{!.*}/,
+    },
     'number': {
         pattern: /\{.+}/,
         inside: {

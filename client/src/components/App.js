@@ -47,8 +47,8 @@ export default function App() {
     async function loadSource() {
         await handlePromise(get(`/source/${selected}`))
             .then(source => {
-                let [namespace, relative] = selected.split(':');
-                source = `{${selected}}\n\n{> ${namespace}:}\n{> ${relative}}\n\n${source}`.trim() + '\n';
+                // let [namespace, relative] = selected.split(':');
+                source = `{! ${selected}}\n\n${source}`.trim() + '\n';
                 if(!prevCode) {
                     setPrevCode(code);
                 }
