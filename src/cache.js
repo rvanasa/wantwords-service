@@ -1,19 +1,21 @@
 'use strict';
 
-const fs = require('fs');
-const {join, relative, resolve} = require('path');
+import fs from 'fs';
+import {join, relative, resolve} from 'path';
 
-const glob = require('glob-promise');
-const {createOptions} = require('./parser');
+import glob from 'glob-promise';
+import {createOptions} from './parser';
+
+import gitPromise from 'simple-git/promise';
 
 const cacheDir = './cache';
 
-let absoluteKeys = [];
+export let absoluteKeys = [];
 let optionsFromKey = {};
 let absoluteKeysFromGlobal = {};
 let sourceFromGlobal = {};
 
-function findOptions(key) {
+export const _findOptions = function findOptions(key) {
     let options = optionsFromKey[key];
     if(!options) {
         throw new Error('Unknown key: ' + key);
@@ -22,17 +24,17 @@ function findOptions(key) {
         throw new Error('No options found for key: ' + key);
     }
     return options;
-}
+};
 
-async function update(initial) {
+export async function update(initial) {
     if(initial) {
         if(!fs.existsSync(cacheDir)) {
             console.log('Cloning repository...');
-            await require('simple-git/promise')(resolve(cacheDir, '..'))
+            await gitPromise(resolve(cacheDir, '..'))
                 .clone('https://github.com/rvanasa/wordlists', 'cache'/*, {recursive: true}*/);
         }
     }
-    let git = require('simple-git/promise')(cacheDir);
+    let git = await gitPromise(cacheDir);
     if(!initial && !(await git.status()).behind) {
         return;
     }
@@ -87,17 +89,10 @@ async function update(initial) {
     absoluteKeys.sort();
 }
 
-function findSource(key) {
+export const _findSource = function findSource(key) {
     return sourceFromGlobal.hasOwnProperty(key) ? sourceFromGlobal[key] : null;
-}
+};
 
 function include(map, key, options) {
     map[key] = (map[key] || []).concat(options);
 }
-
-module.exports = {
-    absoluteKeys,
-    _findSource: findSource,
-    _findOptions: findOptions,
-    update,
-};

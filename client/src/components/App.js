@@ -3,8 +3,8 @@ import {Col, ListGroup, ListGroupItem, Row} from 'react-bootstrap';
 import {get, post} from '../util/api';
 import KeyDetails from './KeyDetails';
 import classes from '../util/classes';
-import CodeEditor from './CodeEditor';
-import {FaArrowRight, FaRandom, FaTrash} from 'react-icons/all';
+import ListEditor from './ListEditor';
+import {FaArrowRight, FaRandom, FaTimes, FaTrash} from 'react-icons/all';
 import useLocalStorage from 'react-use-localstorage';
 
 export default function App() {
@@ -14,6 +14,8 @@ export default function App() {
     let [examples, setExamples] = useState([]);
     let [search, setSearch] = useState('');
     let [code, setCode] = useLocalStorage('code', '');
+    let [prevCode, setPrevCode] = useLocalStorage('prevCode', '');
+    let [hasError, setHasError] = useState(false);
 
     useEffect(() => {
         get('/lists')
@@ -21,46 +23,59 @@ export default function App() {
             .catch(err => console.error(err.stack || err));
     }, []);
 
-    function handleError(err) {
-        console.error(err.stack || err);
+    async function handlePromise(promise) {
+        try {
+            let result = await promise;
+            hasError = false;
+            return result;
+        }
+        catch(err) {
+            hasError = true;
+            console.error(err.stack || err);
+            return new Promise(() => null);
+        }
     }
 
-    function loadExamples(key) {
-        get(`/random/${key}/15`)
+    async function loadExamples(key) {
+        await handlePromise(get(`/random/${key}/15`))
             .then(examples => {
                 setSelected(key);
                 setExamples(examples);
-            })
-            .catch(handleError);
+            });
     }
 
-    function loadSource() {
-        get(`/source/${selected}`)
+    async function loadSource() {
+        await handlePromise(get(`/source/${selected}`))
             .then(source => {
-                if(!source.endsWith('\n')) {
-                    source += '\n';
+                let [namespace, relative] = selected.split(':');
+                source = `{> ${namespace}:}\n{> ${relative}}\n\n${source}`.trim() + '\n';
+                if(!prevCode) {
+                    setPrevCode(code);
                 }
                 setCode(source);
-            })
-            .catch(handleError);
+            });
     }
 
-    function evalCode() {
+    async function evalCode() {
         if(!code) {
             return;
         }
-        post(`/choose/15`, code)
+        await handlePromise(post(`/choose/15`, code))
             .then(results => {
                 setSelected('_');
                 setExamples(results.map(text => ({text})));
-            })
-            .catch(handleError);
+            });
+    }
+
+    function popCode() {
+        setCode(prevCode);
+        setPrevCode('');
     }
 
     return (
         <div className="container-fluid pt-4">
             <Row>
-                <Col md={4}>
+                <Col md={3}>
                     <div className="pt-1 pb-2 bg-secondary rounded-top">
                         <div className="input-group">
                             <input className="form-control" autoFocus
@@ -85,15 +100,16 @@ export default function App() {
                         </ListGroup>
                     </div>
                 </Col>
-                <Col md={4}>
-                    {!examples.length && <h1 className="display-4 text-center text-dark">Want, Words!</h1>}
+                <Col md={3}>
+                    {!examples.length && <h1 className="display-4 text-center text-dark mt-5">Want, Words!</h1>}
                     {!!examples.length && <>
                         <div style={{overflowY: 'scroll', height: '80vh'}}>
                             <KeyDetails examples={examples}/>
                         </div>
                         <div className="py-2 bg-dark rounded">
                             <div className="d-flex">
-                                <input type="text" readOnly className="form-control-plaintext bg-light p-2 rounded"
+                                <input type="text" readOnly
+                                       className="form-control-plaintext bg-light p-2 ml-1 rounded text-monospace"
                                        onFocus={e => e.target.select()}
                                        value={`{${selected}}`}/>
                                 <div className="btn btn-dark rounded" onClick={loadSource}>
@@ -103,20 +119,26 @@ export default function App() {
                         </div>
                     </>}
                 </Col>
-                <Col md={4}>
+                <Col md={6}>
                     <div className="bg-dark p-1 pr-0 rounded">
                         <div className="mt-1 mb-2">
+                            <div {...classes('btn btn-dark rounded', !code && 'disabled')}
+                                 onClick={() => evalCode()}>
+                                <FaRandom style={{transform: 'scaleX(-1)'}}/>
+                            </div>
                             <div {...classes('btn btn-dark rounded float-right', !code && 'disabled')}
                                  onClick={() => setCode('')}>
                                 <FaTrash/>
                             </div>
-                            <div {...classes('btn btn-dark rounded', !code && 'disabled')}
-                                 onClick={() => evalCode()}>
-                                <FaRandom style={{transform:'scaleX(-1)'}}/>
-                            </div>
+                            {prevCode && (
+                                <div className="btn btn-dark rounded float-right text-danger"
+                                     onClick={() => popCode()}>
+                                    <FaTimes/>
+                                </div>
+                            )}
                         </div>
                         <div style={{height: '80vh', overflow: 'auto'}}>
-                            <CodeEditor code={code}
+                            <ListEditor code={code}
                                         setCode={setCode}
                                         onEval={() => evalCode()}/>
                         </div>

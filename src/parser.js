@@ -1,16 +1,20 @@
 'use strict';
 
-const blockParser = require('block-parser')({pairs: '{}', quotes: '«»'});
+import block_parser from 'block-parser';
 
-function getNamespace(key) {
+import {_findOptions} from './cache';
+
+const blockParser = block_parser({pairs: '{}', quotes: '«»'});
+
+export function getNamespace(key) {
     return key.substring(0, key.indexOf(':'));
 }
 
-function fromNamespace(namespace, key) {
+export function fromNamespace(namespace, key) {
     return key.includes(':') ? key : namespace + ':' + key;
 }
 
-function createLocals(key, data) {
+export function parse(key, data) {
     let namespace = getNamespace(key);
     let currentKey = key;
     let current = [];
@@ -18,10 +22,16 @@ function createLocals(key, data) {
     for(let line of data.split(/\r?\n/)) {
         line = line.trim();
         if(line.length && !line.startsWith('#')) {
-            if(line.startsWith('{::') && line.endsWith('}')) {
-                locals[currentKey] = current;
-                currentKey = fromNamespace(namespace, line.slice(3, -1).trim());
-                current = [];
+            if(line.startsWith('{>') && line.endsWith('}')) {
+                let nextKey = fromNamespace(namespace, line.slice(2, -1).trim());
+                if(!nextKey) {
+                    namespace = nextKey;
+                }
+                else if(currentKey !== nextKey) {
+                    locals[currentKey] = current;
+                    currentKey = nextKey;
+                    current = locals.hasOwnProperty(currentKey) ? locals[currentKey] : [];
+                }
             }
             else {
                 current.push({
@@ -36,11 +46,11 @@ function createLocals(key, data) {
     return locals;
 }
 
-function createOptions(key, data) {
-    return createLocals(key, data)[key];
+export function createOptions(key, data) {
+    return parse(key, data)[key];
 }
 
-function resolveOptions(namespace, key, locals) {
+export function resolveOptions(namespace, key, locals) {
     if(locals && !key.includes(':') && locals.hasOwnProperty(key)) {
         return locals[key];
     }
@@ -48,14 +58,14 @@ function resolveOptions(namespace, key, locals) {
     if(locals && locals.hasOwnProperty(absKey)) {
         return locals[absKey];
     }
-    return require('./cache')._findOptions(absKey);
+    return _findOptions(absKey);
 }
 
-function chooseOption(namespace, options) {
-    if(typeof options === 'string') {
-        options = resolveOptions(namespace, options);
+export function chooseOption(namespace, input) {
+    let options = typeof input === 'string' ? resolveOptions(namespace, input) : input;
+    if(!options.length) {
+        throw new Error(`No options were found from ${namespace}:${typeof input === 'string' ? input : '[...]'}`);
     }
-
     let option = options[Math.floor(Math.random() * options.length)];
     return instance(option);
 }
@@ -91,12 +101,3 @@ function evaluate(namespace, expr, locals) {
     }
     return result;
 }
-
-module.exports = {
-    createLocals,
-    createOptions,
-    resolveOptions,
-    chooseOption,
-    instance,
-    evaluate,
-};

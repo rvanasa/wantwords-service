@@ -1,6 +1,9 @@
 import React from 'react';
 import Editor from 'react-simple-code-editor';
 import {highlight} from 'prismjs/components/prism-core';
+import 'prismjs/themes/prism-solarizedlight.css';
+
+import './ListEditor.scss';
 
 const language = {
     'comment': {
@@ -8,12 +11,16 @@ const language = {
         lookbehind: true,
         greedy: true,
     },
-    'function': /::/,
-    'punctuation': /[{}:]/,
+    'variable': /\{(>.*)}/,
+    'number': {
+        pattern: /\{([a-zA-Z_.]+)}/,
+        // lookbehind: true,
+        // greedy: true,
+    },
+    // 'punctuation': /[{}:]/,
 };
 
-export default function CodeEditor(props) {
-    let {examples} = props;
+export default function ListEditor(props) {
 
     return (
         <Editor
@@ -22,10 +29,9 @@ export default function CodeEditor(props) {
             onKeyDown={e => e.ctrlKey && e.keyCode === 13 && props.onEval(e)}
             highlight={code => highlight(code, language)}
             padding="1em"
-            className="bg-light"
+            className="bg-light text-monospace"
             style={{
                 ...props.style,
-                fontFamily: 'monospace',
                 fontSize: 16,
             }}/>
     );

@@ -33,10 +33,12 @@ Below is a quick example of the `.want` file format:
 ```
 # I'm a comment!
 
+I'm a string option!
+
 I'm a {reference}!
 
 # Start a local list with key "reference"
-{:: reference}
+{> reference}
     
     # Whitespace is optional
     thing
@@ -54,11 +56,18 @@ I'm a {reference}!
 
 
 # Override the global list "vekta:boss_title" with custom strings
-{:: vekta:boss_title}
+{> vekta:boss_title}
     Chad-{vekta:boss_name}
     
     # Self-reference the top list in this file using {_}
     The "{_}"
+
+# Start using the "vekta" namespace
+{> vekta:}
+
+# Add some more boss titles
+{> boss_title}
+    the {person_adj}
 
 ```
 
@@ -74,7 +83,7 @@ npm install
 
 ```sh
 npm run start-dev
-```
+```s
 
 Webapp: http://localhost:3000
 

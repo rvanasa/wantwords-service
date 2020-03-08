@@ -1,9 +1,11 @@
 'use strict';
 
-const express = require('express');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 
-const {chooseOption, createOptions, resolveOptions} = require('./parser');
-const {absoluteKeys, _findSource} = require('./cache');
+import {chooseOption, createOptions, fromNamespace, getNamespace} from './parser';
+import {_findSource, absoluteKeys} from './cache';
 
 function sample(n, f) {
     return Array.from({length: n}).map((_, i) => f(i));
@@ -25,10 +27,9 @@ function handleChoose(requestKey) {
 
 let router = express.Router();
 
-router.use(require('body-parser').json());
-router.use(require('body-parser').text({type: '*/*'}));
-
-router.use(require('cors')());
+router.use(bodyParser.json());
+router.use(bodyParser.text({type: '*/*'}));
+router.use(cors());
 
 router.get('/lists', (req, res) => {
     res.json(absoluteKeys);
@@ -64,5 +65,5 @@ router.post('/choose/:amount', (req, res) => {
     res.send(chooseSample(req.params.amount, input));
 });
 
-module.exports = router;
+export default router;
 
