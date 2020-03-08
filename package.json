@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "cd client && npm i --only=prod && npm run build && cd .. && node .",
+    "start": "node .",
     "start-dev": "concurrently -r npm:watch-*",
     "watch-client": "cd client && npm run start",
     "watch-server": "nodemon .",
