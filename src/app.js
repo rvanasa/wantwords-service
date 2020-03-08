@@ -1,6 +1,5 @@
 'use strict';
 
-import {join} from 'path';
 import express from 'express';
 
 import api from './api';

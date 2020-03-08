@@ -16,24 +16,28 @@ export function fromNamespace(namespace, key) {
 
 export function parse(key, data) {
     let namespace = getNamespace(key);
-    let currentKey = key;
+    if(!namespace) {
+        throw new Error(`Namespace required to parse lines: ${data.slice(0, 10).replace('\n', '\\n')}...`);
+    }
+    let currentKey = fromNamespace(namespace, key);
     let current = [];
     let locals = {};
     for(let line of data.split(/\r?\n/)) {
         line = line.trim();
         if(line.length && !line.startsWith('#')) {
             if(line.startsWith('{!') && line.endsWith('}')) {
-                let mainKey = line.slice(2, -1).trim();
+                let listKey = line.slice(2, -1).trim();
                 locals[currentKey] = current;
-                currentKey = mainKey;
+                currentKey = listKey;
             }
             else if(line.startsWith('{>') && line.endsWith('}')) {
                 let into = line.startsWith('{>>');
                 let nextKey = fromNamespace(namespace, line.slice(into ? 3 : 2, -1).trim());
-                if(!nextKey || into) {
-                    namespace = nextKey;
+                let onlyNamespace = nextKey.indexOf(':') === nextKey.length - 1;
+                if(onlyNamespace || into) {
+                    namespace = getNamespace(nextKey);
                 }
-                else if(currentKey !== nextKey) {
+                if(!onlyNamespace && currentKey !== nextKey) {
                     locals[currentKey] = current;
                     currentKey = nextKey;
                     current = locals.hasOwnProperty(currentKey) ? locals[currentKey] : [];
@@ -64,7 +68,10 @@ export function resolveOptions(namespace, key, locals) {
     if(locals && locals.hasOwnProperty(absKey)) {
         return locals[absKey];
     }
-    return _findOptions(absKey);
+    return _findOptions(absKey).map(opt => ({
+        ...opt,
+        locals: {...opt.locals, ...locals},
+    }));
 }
 
 export function chooseOption(namespace, input) {

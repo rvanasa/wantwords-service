@@ -54,7 +54,7 @@ export async function update(initial) {
         if(!fs.lstatSync(dir).isDirectory()) {
             continue;
         }
-        glob.sync(`${dir}/**/*.txt`)
+        glob.sync(`${dir}/**/*.{txt,want}`)
             .forEach(file => {
                 let data = fs.readFileSync(file).toString('utf8')
                     .replace('\r\n', '\n')
@@ -81,7 +81,7 @@ export async function update(initial) {
 
                 absoluteKeys.push(absShort);
                 include(optionsFromKey, absShort, options);
-                include(optionsFromKey, `:${short}`, options);
+                // include(optionsFromKey, `:${short}`, options);
                 include(absoluteKeysFromGlobal, namespace, absShort);
                 // TODO collision handling
                 sourceFromGlobal[absShort] = data;

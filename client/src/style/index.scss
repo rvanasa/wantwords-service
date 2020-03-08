@@ -39,7 +39,11 @@ body {
   color: $light;
 }
 
-.clickable, .btn {
+//.disabled {
+//  cursor: default !important;
+//}
+
+.clickable, .btn:not(.disabled) {
   cursor: pointer;
 
   &:hover {

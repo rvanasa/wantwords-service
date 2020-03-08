@@ -7,9 +7,9 @@ import './ListEditor.scss';
 
 const language = {
     'comment': {
-        pattern: /(^|[^\\:])#.*/,
-        lookbehind: true,
-        greedy: true,
+        pattern: /(^|\n)\s*#.*/,
+        // lookbehind: true,
+        // greedy: true,
     },
     'variable': {
         pattern: /\{>.*}/,
@@ -30,11 +30,18 @@ const language = {
 
 export default function ListEditor(props) {
 
+    function onKeyDown(e) {
+        if(e.ctrlKey && e.keyCode === 13) {
+            e.preventDefault();
+            props.onEval(e);
+        }
+    }
+
     return (
         <Editor
             value={props.code}
             onValueChange={code => props.setCode(code)}
-            onKeyDown={e => e.ctrlKey && e.keyCode === 13 && props.onEval(e)}
+            onKeyDown={onKeyDown}
             highlight={code => highlight(code, language)}
             padding="1em"
             className="bg-light text-monospace"

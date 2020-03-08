@@ -48,9 +48,6 @@ I'm a {reference}!
     # Choose from the global list with namespace "vekta" and key "item_noun"
     {vekta:item_noun}
 
-    # Choose from every global list with the key "obj"
-    {:obj}
-
     # Capitalize result
     {^vekta:boss}
 

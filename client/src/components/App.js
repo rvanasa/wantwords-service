@@ -112,7 +112,8 @@ export default function App() {
                                        className="form-control-plaintext bg-light p-2 ml-1 rounded text-monospace"
                                        onFocus={e => e.target.select()}
                                        value={`{${selected}}`}/>
-                                <div className="btn btn-dark rounded" onClick={loadSource}>
+                                <div {...classes('btn btn-dark rounded', selected === '_' && 'disabled')}
+                                     onClick={() => selected !== '_' && loadSource()}>
                                     <FaArrowRight/>
                                 </div>
                             </div>
@@ -131,7 +132,7 @@ export default function App() {
                                 <FaTrash/>
                             </div>
                             {prevCode && (
-                                <div className="btn btn-dark rounded float-right text-danger"
+                                <div className="btn btn-dark rounded text-danger"
                                      onClick={() => popCode()}>
                                     <FaTimes/>
                                 </div>
