@@ -7,8 +7,10 @@ import api from './api';
 
 let app = express();
 
-app.get('/', (req, res) => res.sendFile(join(__dirname, 'client/build/index.html')));
-app.use(express.static(join(__dirname, 'client/build')));
+let buildDir = './client/build';
+
+app.use(express.static(buildDir));
+app.get('/', (req, res) => res.sendFile(`${buildDir}/index.html`));
 
 app.use('/api', api);
 
