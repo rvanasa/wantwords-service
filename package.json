@@ -18,10 +18,10 @@
     "glob-promise": "^3.4.0",
     "simple-git": "^1.131.0",
     "glob": "^7.1.6",
-    "dotenv": "latest"
+    "dotenv": "latest",
+    "esm": "^3.2.25"
   },
   "devDependencies": {
-    "esm": "^3.2.25",
     "nodemon": "^2.0.2",
     "concurrently": "^5.1.0"
   },
