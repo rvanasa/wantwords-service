@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const url = 'http://localhost:8080/api';
+export const url = process.env.API_URL || 'api';
 
 async function handle(method, path, body) {
     console.log(method.toUpperCase(), path);
