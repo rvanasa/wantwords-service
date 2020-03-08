@@ -1,13 +1,14 @@
 'use strict';
 
-import path from 'path';
+import {join} from 'path';
 import express from 'express';
 
 import api from './api';
 
 let app = express();
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.get('/', (req, res) => res.sendFile(join(__dirname, 'client/build/index.html')));
+app.use(express.static(join(__dirname, 'client/build')));
 
 app.use('/api', api);
 
