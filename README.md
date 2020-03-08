@@ -65,10 +65,23 @@ I'm a {reference}!
 # Start using the "vekta" namespace
 {> vekta:}
 
-# Add some more boss titles
-{> boss_title}
-    the {person_adj}
-
+    # Add some more boss titles
+    {> boss_title}
+        the {person_adj}
+    
+    # Move into a namespace
+    {> adj_obj:}
+        # Override "adj_obj:obj"
+        {> obj}
+            Thing
+            Thang
+            Thong
+    
+            # Shorthand: override these keys with the current list and then switch to the last namespace
+            {! vekta:item_legendary}
+            {! vekta:item_rare}
+            
+            {item_common}
 ```
 
 ---

@@ -83,7 +83,7 @@ export default function App() {
                                    onChange={e => setSearch(e.target.value)}/>
                         </div>
                     </div>
-                    <div style={{overflowY: 'scroll', height: '80vh'}}>
+                    <div style={{overflowX: 'hidden', overflowY: 'scroll', height: '80vh'}}>
                         <ListGroup>
                             {keys.filter(key => !search || key.includes(search.toLowerCase())).map(key => (
                                 <ListGroupItem
