@@ -26,11 +26,11 @@ export default function App() {
     async function handlePromise(promise) {
         try {
             let result = await promise;
-            hasError = false;
+            setHasError(false);
             return result;
         }
         catch(err) {
-            hasError = true;
+            setHasError(true);
             console.error(err.stack || err);
             return new Promise(() => null);
         }
@@ -48,7 +48,7 @@ export default function App() {
         await handlePromise(get(`/source/${selected}`))
             .then(source => {
                 let [namespace, relative] = selected.split(':');
-                source = `{> ${namespace}:}\n{> ${relative}}\n\n${source}`.trim() + '\n';
+                source = `{> ${namespace}:}\n{${relative}}\n{> ${relative}}\n\n${source}`.trim() + '\n';
                 if(!prevCode) {
                     setPrevCode(code);
                 }
@@ -120,7 +120,7 @@ export default function App() {
                     </>}
                 </Col>
                 <Col md={6}>
-                    <div className="bg-dark p-1 pr-0 rounded">
+                    <div  {...classes('p-1 pr-0 rounded', hasError ? 'bg-danger' : 'bg-dark')}>
                         <div className="mt-1 mb-2">
                             <div {...classes('btn btn-dark rounded', !code && 'disabled')}
                                  onClick={() => evalCode()}>

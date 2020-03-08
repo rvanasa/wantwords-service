@@ -11,13 +11,18 @@ const language = {
         lookbehind: true,
         greedy: true,
     },
-    'variable': /\{(>.*)}/,
-    'number': {
-        pattern: /\{([a-zA-Z_.]+)}/,
-        // lookbehind: true,
-        // greedy: true,
+    'variable': {
+        pattern: /\{>.*}/,
+        inside: {
+            'selector': /[a-zA-Z_.]*:/,
+        },
     },
-    // 'punctuation': /[{}:]/,
+    'number': {
+        pattern: /\{.+}/,
+        inside: {
+            'selector': /[a-zA-Z_.]*:/,
+        },
+    },
 };
 
 export default function ListEditor(props) {
