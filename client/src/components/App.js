@@ -48,7 +48,7 @@ export default function App() {
         await handlePromise(get(`/source/${selected}`))
             .then(source => {
                 let [namespace, relative] = selected.split(':');
-                source = `{> ${namespace}:}\n{${relative}}\n{> ${relative}}\n\n${source}`.trim() + '\n';
+                source = `{${selected}}\n\n{> ${namespace}:}\n{> ${relative}}\n\n${source}`.trim() + '\n';
                 if(!prevCode) {
                     setPrevCode(code);
                 }
