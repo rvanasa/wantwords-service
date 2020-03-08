@@ -7,7 +7,7 @@
     "start-dev": "concurrently -r npm:watch-*",
     "watch-client": "cd client && npm run start",
     "watch-server": "nodemon .",
-    "deploy": "git push heroku master "
+    "deploy": "git add . && cd client && npm run build && git add -f build && git commit -m \"Deploy\" && git push heroku master"
   },
   "dependencies": {
     "axios": "^0.19.2",
