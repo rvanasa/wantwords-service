@@ -54,7 +54,7 @@ I'm a {reference}!
 
 # Override the global list "vekta:boss_title" with custom strings
 {> vekta:boss_title}
-    Chad-{vekta:boss_name}
+    Chad-{vekta:boss_modifier}
     
     # Self-reference the top list in this file using {_}
     The "{_}"

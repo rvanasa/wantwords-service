@@ -45,6 +45,7 @@ export function parse(key, data) {
             }
             else {
                 current.push({
+                    namespace,
                     locals,
                     key: currentKey,
                     text: line,
@@ -80,20 +81,20 @@ export function chooseOption(namespace, input) {
         throw new Error(`No options were found from ${namespace}:${typeof input === 'string' ? input : '[...]'}`);
     }
     let option = options[Math.floor(Math.random() * options.length)];
-    return instance(option);
+    return instance(namespace, option);
 }
 
-function instance(option) {
+function instance(namespace, option) {
     return {
         ...option,
-        text: parseOption(getNamespace(option.key), option.text, option.locals),
+        text: generate(option.namespace || namespace, option.text, option.locals),
     };
 }
 
-function parseOption(namespace, text, locals) {
+function generate(namespace, text, locals) {
     let result = blockParser.get(...[text]);
     return result.length > 1
-        ? result[0].slice(0, -1) + evaluate(namespace, result[1], locals) + parseOption(namespace, result[2].slice(1), locals)
+        ? result[0].slice(0, -1) + evaluate(namespace, result[1], locals) + generate(namespace, result[2].slice(1), locals)
         : text;
 }
 
@@ -103,12 +104,10 @@ function evaluate(namespace, expr, locals) {
         expr = expr.substring(1);
     }
 
-    expr = parseOption(namespace, expr, locals);// Nested resolvers
-    if(namespace && !expr.includes(':')) {
-        expr = `${namespace}:${expr}`;
-    }
-    let option = chooseOption(namespace, resolveOptions(namespace, expr, locals));
-    let result = option ? option.text : `{?${expr}?}`;
+    let key = fromNamespace(namespace, generate(namespace, expr, locals));
+    let keyNamespace = getNamespace(key);
+    let option = chooseOption(keyNamespace, resolveOptions(keyNamespace, key, locals));
+    let result = option ? option.text : `{?${key}?}`;
     if(cap && result) {
         result = result[0].toUpperCase() + result.substring(1);
     }

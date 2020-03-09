@@ -19,8 +19,9 @@
     "glob-promise": "^3.4.0",
     "simple-git": "^1.131.0",
     "glob": "^7.1.6",
-    "dotenv": "latest",
-    "esm": "^3.2.25"
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "normalize-url": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2",

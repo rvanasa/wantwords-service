@@ -4,6 +4,7 @@ import {highlight} from 'prismjs/components/prism-core';
 import 'prismjs/themes/prism-solarizedlight.css';
 
 import './ListEditor.scss';
+import classes from '../util/classes';
 
 const language = {
     'comment': {
@@ -44,7 +45,7 @@ export default function ListEditor(props) {
             onKeyDown={onKeyDown}
             highlight={code => highlight(code, language)}
             padding="1em"
-            className="bg-light text-monospace"
+            {...classes('text-monospace', props.className)}
             style={{
                 ...props.style,
                 fontSize: 16,

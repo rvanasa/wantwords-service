@@ -1,19 +1,43 @@
 'use strict';
 
-import fs from 'fs';
 import {join, relative, resolve} from 'path';
+import axios from 'axios';
+import normalizeUrl from 'normalize-url';
 
-import glob from 'glob-promise';
-import {createOptions} from './parser';
-
-import gitPromise from 'simple-git/promise';
-
-const cacheDir = './cache';
+import {parse} from './parser';
 
 export let absoluteKeys = [];
+let localsFromNamespace = {};
 let optionsFromKey = {};
-let absoluteKeysFromGlobal = {};
-let sourceFromGlobal = {};
+let sourceFromKey = {};
+
+function addNamespace(namespace, locals) {
+    localsFromNamespace[locals] = namespace;
+    Object.entries(locals).forEach(([key, options]) => {
+        if(!options.length) {
+            return;
+        }
+        absoluteKeys.push(key);
+        optionsFromKey[key] = options;
+        sourceFromKey[key] = options.map(({text}) => text).join('\n');//TEMP
+    });
+}
+
+// let mainUrl = 'https://rvanasa.github.io/wantwords';
+let mainUrl = 'https://raw.githubusercontent.com/rvanasa/wantwords/gh-pages';
+
+export async function update(initial) {
+    absoluteKeys.length = 0;
+    localsFromNamespace = {};
+    optionsFromKey = {};
+    sourceFromKey = {};
+
+    await Promise.all((await axios.get(`${mainUrl}/_namespaces.txt`)).data.split('\n')
+        .map(async namespace => {
+            let locals = parse(`${namespace}:_`, (await axios.get(`${mainUrl}/${namespace}.want`)).data);
+            addNamespace(namespace, locals);
+        }));
+}
 
 export const _findOptions = function findOptions(key) {
     let options = optionsFromKey[key];
@@ -26,74 +50,10 @@ export const _findOptions = function findOptions(key) {
     return options;
 };
 
-export async function update(initial) {
-    if(initial) {
-        if(!fs.existsSync(cacheDir)) {
-            console.log('Cloning repository...');
-            await gitPromise(resolve(cacheDir, '..'))
-                .clone('https://github.com/rvanasa/wordlists', 'cache'/*, {recursive: true}*/);
-        }
-    }
-    let git = await gitPromise(cacheDir);
-    if(!initial && !(await git.status()).behind) {
-        return;
-    }
-
-    console.log('Updating cache...');
-    await git.fetch('https://github.com/rvanasa/wantwords');
-
-    absoluteKeys.length = 0;
-    optionsFromKey = {};
-    absoluteKeysFromGlobal = {};
-    sourceFromGlobal = {};
-
-    for(let namespace of fs.readdirSync(join(cacheDir, 'words'))) {
-        namespace = namespace.toLowerCase();
-
-        let dir = join(cacheDir, 'words', namespace);
-        if(!fs.lstatSync(dir).isDirectory()) {
-            continue;
-        }
-        glob.sync(`${dir}/**/*.{txt,want}`)
-            .forEach(file => {
-                let data = fs.readFileSync(file).toString('utf8')
-                    .replace('\r\n', '\n')
-                    .trim();
-
-                let key = relative(dir, file)
-                    .slice(0, -4)
-                    .replace(/[\\/]/g, '.')
-                    .replace('-', '_')
-                    .toLowerCase();
-
-                // absoluteKeys.push(`${namespace}:${key}`);
-
-                // let options = createOptions(key, data);
-                //
-                // include(optionsFromKey, `${namespace}:${key}`, options);
-                // include(optionsFromKey, `:${key}`, options);
-                // include(absoluteKeysFromGlobal, namespace, `${namespace}:${key}`);
-
-                let short = key.substring(key.lastIndexOf('.') + 1);
-                let absShort = `${namespace}:${short}`;
-
-                let options = createOptions(absShort, data);
-
-                absoluteKeys.push(absShort);
-                include(optionsFromKey, absShort, options);
-                // include(optionsFromKey, `:${short}`, options);
-                include(absoluteKeysFromGlobal, namespace, absShort);
-                // TODO collision handling
-                sourceFromGlobal[absShort] = data;
-            });
-    }
-    absoluteKeys.sort();
-}
-
 export const _findSource = function findSource(key) {
-    return sourceFromGlobal.hasOwnProperty(key) ? sourceFromGlobal[key] : null;
+    return sourceFromKey.hasOwnProperty(key) ? sourceFromKey[key] : null;
 };
 
-function include(map, key, options) {
-    map[key] = (map[key] || []).concat(options);
-}
+// function include(map, key, options) {
+//     map[key] = (map[key] || []).concat(options);
+// }

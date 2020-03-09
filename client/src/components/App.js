@@ -85,7 +85,7 @@ export default function App() {
                     </div>
                     <div style={{overflowX: 'hidden', overflowY: 'scroll', height: '80vh'}}>
                         <ListGroup>
-                            {keys.filter(key => !search || key.includes(search.toLowerCase())).map(key => (
+                            {keys.filter(key => !search || key.includes(search.trim().toLowerCase())).map(key => (
                                 <ListGroupItem
                                     key={key}
                                     {...classes('clickable pl-3 py-1',
@@ -138,8 +138,9 @@ export default function App() {
                                 </div>
                             )}
                         </div>
-                        <div style={{height: '80vh', overflow: 'auto'}}>
-                            <ListEditor code={code}
+                        <div className="bg-light" style={{height: '80vh', overflow: 'auto'}}>
+                            <ListEditor style={{minHeight: '100%'}}
+                                        code={code}
                                         setCode={setCode}
                                         onEval={() => evalCode()}/>
                         </div>
