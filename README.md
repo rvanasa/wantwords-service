@@ -96,7 +96,7 @@ npm install
 
 ```sh
 npm run start-dev
-```s
+```
 
 Webapp: http://localhost:3000
 
