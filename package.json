@@ -10,7 +10,7 @@
     "deploy": "git add . && git status && cd client && npm run build && git add -f build && git commit -m \"Deploy\" && git push -f heroku master && git reset --soft HEAD~1 && git reset && git add ."
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "block-parser": "1.0.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
