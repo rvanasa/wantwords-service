@@ -17,7 +17,7 @@
     "cron": "^1.8.2",
     "express": "^4.17.1",
     "glob-promise": "^3.4.0",
-    "simple-git": "^1.131.0",
+    "simple-git": "^3.3.0",
     "glob": "^7.1.6",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
